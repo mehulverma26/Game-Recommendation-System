@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Your Game Recommendation</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='styles/result.css')}}">
+
+</head>
+
+<body>
+  <div class="container fade-in">
+    <h1>🎮 Your Recommended Game</h1>
+
+    <div class="game-card">
+      <img src="{{url_for('static', filename='images/result_page.jpg')}}" alt="Recommended Game" class="game-img">
+      <h2 id="game-title">{{result}}</h2>
+      <p id="game-genre">Genre: [Genre tags from the json file]</p>
+      <p id="game-description">[description from the json file]</p>
+    </div>
+
+    <a href="/quiz" class="btn">Take Quiz Again</a>
+  </div>
+
+  <footer class="footer">
+    <p>🎮 Project: Game Recommender | by <strong>Ansh Shokeen</strong></p>
+    <div class="social-icons">
+      <a href="https://www.instagram.com/anshokeen_619/" target="_blank">Instagram</a>
+      <a href="https://x.com/Anshspidey1" target="_blank">Twitter</a>
+      <a href="https://www.linkedin.com/in/ansh-shokeen-6b057a286/" target="_blank">LinkedIn</a>
+    </div>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Game Recommender</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
+</head>
+
+<body>
+  <marquee>Attention Non Gamers</marquee>
+  <div class="container center fade-in">
+    <img src="{{url_for('static', filename='images/Game.jpg')}}" alt="Gaming Banner" style="width: 100%; height: 200px; object-fit: cover; border-radius: 20px;
+                border: 2px solid #0ff; box-shadow: 0 0 15px #0ff; margin-bottom: 20px;">
+    <h1 class="fade-in">🎮Game Recommender by Personality</h1>
+    <p class="fade-in" style="animation-delay: 0.5s;">Take our quiz and find the best game for your personality!</p><br>
+    <a href="/quiz" class="btn fade-in" style="animation-delay: 1s;">Start Quiz</a>
+  </div>
+  <img src="{{url_for('static', filename='images/Marvels-Spider-Man-Remastered.jpg')}}" alt="Gaming Banner"
+    style="width: 100%; height: 600px; object-fit: cover; border-radius: 20px; margin-bottom: 20px;" class="hero-image">
+  <img src="{{url_for('static', filename='images/GoW+Ragnarok+Tyr.jpg')}}" alt="Gaming Banner"
+    style="width: 100%; height: 600px; object-fit: cover; border-radius: 20px; margin-bottom: 20px;" class="hero-image">
+  <img src="{{url_for('static', filename='images/header.jpg')}}" alt="Gaming Banner"
+    style="width: 100%; height: 600px; object-fit: cover; border-radius: 20px; margin-bottom: 20px;" class="hero-image">
+</body>
+
+</html>
