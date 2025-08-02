@@ -3,21 +3,65 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Your Game Recommendation</title>
+  <title>Your Game Recommendations</title>
   <link rel="stylesheet" href="{{url_for('static', filename='styles/result.css')}}">
-
 </head>
 
 <body>
   <div class="container fade-in">
-    <h1>🎮 Your Recommended Game</h1>
+    <h1>🎮 Your Recommended Games</h1>
 
-    <div class="game-card">
-      <img src="{{url_for('static', filename='images/result_page.jpg')}}" alt="Recommended Game" class="game-img">
-      <h2 id="game-title">{{result}}</h2>
-      <p id="game-genre">Genre: [Genre tags from the json file]</p>
-      <p id="game-description">[description from the json file]</p>
+    {% if result and result|length > 0 %}
+    <div class="game-counter">
+      Found {{ result|length }} game{% if result|length != 1 %}s{% endif %} perfect for you!
     </div>
+
+    {% for game in result %}
+    <div class="game-card">
+      <img src="{{url_for('static', filename='images/result_page.jpg')}}" alt="{{ game.title }}" class="game-img">
+
+      <h2 class="game-title">{{ game.title }}</h2>
+
+      {% if game.tags %}
+      <p class="game-genre"><strong>Genres:</strong> {{ game.tags }}</p>
+      {% endif %}
+
+      {% if game.description and game.description != "No description available" %}
+      <p class="game-description">{{ game.description[:200] }}{% if game.description|length > 200 %}...{% endif %}</p>
+      {% endif %}
+
+      <p class="game-price">
+        <strong>Price:</strong>
+        {% if game.price == 0 %}
+        <span class="free-game">Free to Play</span>
+        {% else %}
+        €{{ "%.2f"|format(game.price / 100) }}
+        {% endif %}
+      </p>
+
+      {% set available_platforms = [] %}
+      {% for platform, available in game.platforms.items() if available %}
+      {% set _ = available_platforms.append(platform) %}
+      {% endfor %}
+
+      {% if available_platforms %}
+      <p class="game-platforms">
+        <strong>Available on:</strong><br>
+        {% for platform in available_platforms %}
+        <span class="platform-badge">{{ platform }}</span>
+        {% endfor %}
+      </p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="no-games">
+      <h2>🎲 Oops! No games found</h2>
+      <p>We couldn't find any games matching your preferences right now.</p>
+      <p>Try taking the quiz again with different answers!</p>
+    </div>
+    {% endif %}
 
     <a href="/quiz" class="btn">Take Quiz Again</a>
   </div>
