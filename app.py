@@ -9,7 +9,6 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 CORS(app)
 
-# Load trained ALS model and metadata
 try:
     with open("model/steam_als_model.pkl", "rb") as f:
         model_data = pickle.load(f)
@@ -18,9 +17,9 @@ try:
     game2id = model_data["game2id"]
     id2game = model_data["id2game"]
     metadata = model_data["metadata"]
-    print(f"✅ Model loaded successfully with {len(metadata)} games")
+    print(f"Model loaded successfully with {len(metadata)} games")
 except Exception as e:
-    print(f"❌ Error loading model: {e}")
+    print(f"Error loading model: {e}")
     model = None
 
 
@@ -54,7 +53,6 @@ def predict():
         print(f"Similar games found: {input_app_ids}")
 
         if not input_app_ids:
-            # Fallback: get some popular games based on tags only
             print("No matching games found, using fallback approach")
             result_games = get_fallback_games(tags, preferred_platform)
             session["result_game"] = result_games
@@ -63,22 +61,18 @@ def predict():
         recommended = recommend_games_for_app_ids(input_app_ids, top_n=15)
         print(f"Recommended games: {recommended}")
 
-        # If no recommendations or recommendations failed, use fallback
         if not recommended:
             print("Using fallback games due to recommendation failure")
             result_games = get_fallback_games(tags, preferred_platform)
             session["result_game"] = result_games
             return jsonify({"redirect": url_for("show_result")})
 
-        # Get game metadata for each recommendation and filter by platform
         result_games = []
         for app_id in recommended:
             if app_id not in metadata:
                 continue
 
             game = metadata[app_id]
-
-            # Check platform compatibility
             if preferred_platform != "all" and not is_platform_compatible(
                 game, preferred_platform
             ):
@@ -89,7 +83,7 @@ def predict():
                     "title": game.get("title", "Unknown Game"),
                     "description": game.get("description", "No description available"),
                     "tags": game.get("tags", "No tags"),
-                    "price": float(game.get("price_final", 0)),  # Already in dollars
+                    "price": float(game.get("price_final", 0)),
                     "platforms": {
                         "Windows": game.get("win", False),
                         "Mac": game.get("mac", False),
@@ -98,9 +92,7 @@ def predict():
                     },
                 }
             )
-
-            # Stop when we have 5 games that match the platform preference
-            if len(result_games) >= 5:
+            if len(result_games) >= 5:  # fallback for max of 5 games
                 break
 
         # If we don't have enough games with platform filter, add more without filter
@@ -231,7 +223,7 @@ def get_similar_games_from_tags(tags, top_n=5):
         game_tags = meta["tags"].lower()
         tag_match = 0
 
-        # Count matching tags (more flexible matching)
+        # flexible matching
         for tag in tags:
             if tag.lower() in game_tags:
                 tag_match += 1
@@ -251,7 +243,7 @@ def recommend_games_for_app_ids(app_ids, top_n=15):
     """Use ALS model to recommend games based on input games"""
     known_ids = []
 
-    # Get internal IDs for the input app_ids
+    # internal IDs for the input app_ids
     for aid in app_ids:
         if aid in game2id:
             known_ids.append(game2id[aid])
@@ -260,7 +252,7 @@ def recommend_games_for_app_ids(app_ids, top_n=15):
         print("No known game IDs found")
         return list(metadata.keys())[:top_n]  # Return some random games
 
-    # Create user vector
+    # user vector
     user_vector = np.zeros(len(game2id))
     for i in known_ids:
         user_vector[i] = 1.0
@@ -278,10 +270,8 @@ def recommend_games_for_app_ids(app_ids, top_n=15):
             f"Recommendations shape/length: {getattr(recommended_items, 'shape', len(recommended_items)) if hasattr(recommended_items, '__len__') else 'unknown'}"
         )
 
-        # Handle the recommended items properly
         result = []
 
-        # The implicit library returns a tuple of (ids, scores)
         if isinstance(recommended_items, tuple) and len(recommended_items) == 2:
             item_ids, scores = recommended_items
             print(f"Got {len(item_ids)} item IDs")

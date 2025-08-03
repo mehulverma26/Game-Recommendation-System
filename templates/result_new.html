@@ -35,7 +35,7 @@
         {% if game.price == 0 %}
         <span class="free-game">Free to Play</span>
         {% else %}
-        €{{ "%.2f"|format(game.price / 100) }}
+        ${{ game.price }}
         {% endif %}
       </p>
 
